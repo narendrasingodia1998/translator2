@@ -1,6 +1,5 @@
-import requests
 import json
-
+from requests_cache import CachedSession
 from app.Config.config import lacto_api_key
 from app.utils.constants import UrlEndPoints
 from app.utils.helper2 import get_code
@@ -27,7 +26,8 @@ class Lacto_translator:
             data = {'texts': [request_data.get('source_text')],
                     "to": [target_language],
                     "from": source_language}
-            response = requests.post(url=url, headers=headers, data=json.dumps(data))
+            session = CachedSession(cache_name='cache/translator')
+            response = session.post(url=url, headers=headers, data=json.dumps(data))
             if response.status_code == 200:
                 response_dict = response.json()
                 # print (response_dict)

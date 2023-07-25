@@ -51,3 +51,4 @@ def split_text_into_chunks(text, chunk_size):
         chunks.append(current_chunk.strip())
 
     return chunks
+

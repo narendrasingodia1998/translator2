@@ -1,5 +1,5 @@
 import requests
-
+from requests_cache import CachedSession
 from app.Config.config import rapid_api_key
 from app.utils.constants import UrlEndPoints
 from app.utils.helper2 import get_code
@@ -30,8 +30,8 @@ class Rapid_translator:
                 "X-RapidAPI-Key": rapid_api_key,
                 "X-RapidAPI-Host": "text-translator2.p.rapidapi.com"
             }
-
-            response = requests.post(url, data=payload, headers=headers)
+            session = CachedSession(cache_name='cache/translator')
+            response = session.post(url, data=payload, headers=headers)
             if response.status_code == 200:
                 response = response.json()
                 ans['target_text'] = response.get('data').get('translatedText')
