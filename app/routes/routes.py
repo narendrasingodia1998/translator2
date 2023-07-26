@@ -1,12 +1,11 @@
 import os
 from sanic import Sanic
-from sanic.response import json
 from sanic import response
-from app.utils.helper import validate
+from sanic.response import json
+from app.models.request import Request
 from app.utils.lang_code import lang_code
 from app.managers.google_api import Google_translator
 from app.managers.translator import translator
-from app.utils.helper import create_data
 
 app = Sanic("Translator")
 
@@ -26,45 +25,30 @@ async def finding(request):
 
 
 @app.post('/finder')
-async def find(request):
-    response = await translator(request.json,'language_finder')
+async def find(request_data):
+    request_data = request_data.json
+    request = Request('language_finder')
+    response = await request.async_api_call(request_data)
+    response.add_source_text(request_data['source_text'])
     return response.json()
 
 
 @app.post('/google_api')
 async def google(request):
     request = request.json
-    val_response = await validate(request)
-    if val_response.error:
-        return val_response.json()
-    request_data = create_data(request,val_response)
-    response =  await translator(request_data,'google')
-    response.add_source_lang(val_response.data['source_language'])
+    response = await translator(request,'google')
     return response.json()
 
 
 @app.post('/lacto_ai_api')
 async def lacto(request):
-    request = request.json
-    val_response = await validate(request)
-    if val_response.error:
-        return response.json()
-    request_data = create_data(request,val_response)
-    response =  await translator(request_data,'lacti')
-    response.add_source_lang(val_response.data['source_language'])
-    print(response.data)
+    response = await translator(request,'lacto')
     return response.json()
 
 
 @app.post('/rapid_api')
 async def rapid(request):
-    request = request.json
-    val_response = await validate(request)
-    if val_response.error:
-        return response.json()
-    request_data = create_data(request,val_response)
-    response =  await translator(request_data,'rapid')
-    response.add_source_lang(val_response.data['source_language'])
+    response = await translator(request,'rapid')
     return response.json()
 
 

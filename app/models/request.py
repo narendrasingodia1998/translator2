@@ -1,7 +1,6 @@
 import asyncio
 import aiohttp
 from app.models.response import Response
-from async_timeout import timeout
 from app.Config import config
 from app.utils.helper2 import get_code
 from app.utils.constants import UrlEndPoints
@@ -19,6 +18,7 @@ class Request():
     def build(self,request_data):
         '''
         request_data : dict
+        return : None
         '''
         if self.url_type == 'google':
             self.url = UrlEndPoints.GOOGLE_URL
@@ -61,6 +61,7 @@ class Request():
         '''
         request_data :  dict
         our_response : Response
+        return : Response
         '''
         self.build(request_data)
         timeout = aiohttp.ClientTimeout(total=1)
@@ -70,7 +71,6 @@ class Request():
                 async with session.post(self.url,headers=self.headers,
                                         params=self.params,data=self.data,timeout=timeout) as response:                
                         response = await response.json()
-                        return response
                         #print(f"request output is {response}")
                         our_response.build(response,self.url_type)
                         return  our_response

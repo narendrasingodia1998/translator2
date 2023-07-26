@@ -1,5 +1,5 @@
+from app.models.request import Request
 from app.utils.helper2 import valid_language
-from app.managers.translator import translator
 
 async def validate(request_data):
     '''
@@ -7,7 +7,8 @@ async def validate(request_data):
     return : Response object
     '''
     source_language = request_data.get("source_language").lower().strip()
-    response  = await translator(request_data,'language_finder')
+    request = Request('language_finder')
+    response = await request.async_api_call(request_data)
     #If we not able to detect then
     if response.error:
         return response
