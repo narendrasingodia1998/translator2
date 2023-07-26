@@ -9,7 +9,6 @@ from app.managers.translator import translator
 
 app = Sanic("Translator")
 
-
 @app.route('/')
 async def index(request):
     with open(os.path.join(os.getcwd(), 'app/html/translator.html')) as f:
@@ -17,15 +16,15 @@ async def index(request):
     return response.html(a)
 
 
-@app.route('/find')
-async def finding(request):
+@app.route('/find_language_html')
+async def find_lang_html(request):
     with open(os.path.join(os.getcwd(), 'app/html/detector.html')) as f:
         a = f.read()
     return response.html(a)
 
 
-@app.post('/finder')
-async def find(request_data):
+@app.post('/find_language_api')
+async def find_lang_api(request_data):
     request_data = request_data.json
     request = Request('language_finder')
     response = await request.async_api_call(request_data)
@@ -42,12 +41,14 @@ async def google(request):
 
 @app.post('/lacto_ai_api')
 async def lacto(request):
+    request = request.json
     response = await translator(request,'lacto')
     return response.json()
 
 
 @app.post('/rapid_api')
 async def rapid(request):
+    request = request.json
     response = await translator(request,'rapid')
     return response.json()
 

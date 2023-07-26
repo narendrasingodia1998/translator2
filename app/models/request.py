@@ -1,8 +1,8 @@
 import asyncio
 import aiohttp
-from app.models.response import Response
 from app.Config import config
 from app.utils.helper2 import get_code
+from app.models.response import Response
 from app.utils.constants import UrlEndPoints
 from aiohttp_client_cache import CachedSession, SQLiteBackend
 
@@ -64,7 +64,7 @@ class Request():
         return : Response
         '''
         self.build(request_data)
-        timeout = aiohttp.ClientTimeout(total=1)
+        timeout = aiohttp.ClientTimeout(total=10)
         our_response = Response()
         try:
             async with CachedSession(cache=SQLiteBackend('cache/demo_cache',allowed_methods=('GET', 'POST')),allowable_methods = ['GET','POST']) as session:

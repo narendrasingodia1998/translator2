@@ -1,5 +1,6 @@
 from sanic.response import json
 from app.utils.helper2 import get_language
+
 class Response():
     def __init__(self):
         self.error = 0

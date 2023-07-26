@@ -14,8 +14,10 @@ class Google_translator:
         self.api_call_limit = 5000
         self.url = UrlEndPoints.GOOGLE_URL
 
-    #TODO: Can call apis in try/except clause
     def api_call(self, request_data):
+        '''
+        
+        '''
         st = time.time()
         ans = {}
         ans['error'] = 0

@@ -1,5 +1,6 @@
 from app.models.request import Request
 from app.utils.helper import validate,create_data
+
 async def translator(request_data,url_type):
     '''
     request_data : dict
