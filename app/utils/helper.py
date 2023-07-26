@@ -1,39 +1,31 @@
 from app.utils.helper2 import valid_language
-from app.managers.find_language import Finder
+from app.managers.translator import translator
 
-
-def validate(request_data):
-    ans = {'error': 0}
+async def validate(request_data):
+    '''
+    request_data : dict
+    return : Response object
+    '''
     source_language = request_data.get("source_language").lower().strip()
-
-    finder = Finder()
-    translated_txt = finder.api_call(request_data)
-    if translated_txt['error']:
-        return translated_txt
-    detected_language = translated_txt['detected_language']
-
-    # Checking if source language is given
+    response  = await translator(request_data,'language_finder')
+    #If we not able to detect then
+    if response.error:
+        return response
+    detected_language = response.data['source_language']
+    print(f'Detected Language {detected_language}')
+    #checking if source language is given
     if len(source_language.strip()) > 0:
         # Checking for valid language
         if not valid_language(source_language):
-            ans['error'] = 1
-            ans["error_message"] = "API does not support {} language as source language".format(source_language)
-            return ans
+            response.input_language_error(source_language)
+            return response
         elif detected_language.lower() != source_language.lower():
-            ans['error'] = 1
-            ans['error_message'] = 'Detected Language doesnot match with Source Language'
-            return ans
-    ans['source_language'] = detected_language
-    request_data['source_language'] = detected_language
-    target_language = request_data.get('target_language').lower().strip()
-    ans['target_language'] = target_language
-    # checking if target language is valid or not
+            response.miss_matched_error()
+            return response
+    target_language = request_data.get('target_language').lower().strip() 
     if not valid_language(target_language):
-        ans['error'] = 1
-        ans["error_message"] = "API does not support {} language as target language".format(target_language)
-        return ans
-    return ans
-
+        response.output_language_error(target_language)
+    return response 
 
 def split_text_into_chunks(text, chunk_size):
     chunks = []
@@ -51,4 +43,16 @@ def split_text_into_chunks(text, chunk_size):
         chunks.append(current_chunk.strip())
 
     return chunks
+
+def create_data(request,response):
+    '''
+    request_data : dict
+    response : Response object
+    return dict
+    '''
+    request_data = {
+    'source_language': response.data['source_language'],
+    'source_text' : request['source_text'],
+    'target_language': request['target_language']}
+    return request_data
 

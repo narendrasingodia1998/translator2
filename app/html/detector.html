@@ -105,7 +105,7 @@
                     const response = JSON.parse(xhr.responseText);
                     //console.log(response)
                     if(response.error == 0){
-                        document.getElementById('detected_language').value = response.detected_language;
+                        document.getElementById('detected_language').value = response.source_language;
                     }
                     else{
                         document.getElementById('Error').value = response.error_message;

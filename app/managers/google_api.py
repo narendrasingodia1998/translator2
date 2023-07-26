@@ -1,8 +1,6 @@
-import requests
 import asyncio
 import aiohttp
 import time
-import aiohttp_client_cache
 from app.Config.config import google_api_key
 from app.utils.constants import UrlEndPoints
 from app.utils.helper import split_text_into_chunks
@@ -29,7 +27,7 @@ class Google_translator:
                 "target": target_language,
                 "key": google_api_key,
             }
-            session = CachedSession(cache_name='cache/translator')
+            session = CachedSession(cache_name='cache/translator',allowable_methods=['GET', 'POST'])
             response = session.post(UrlEndPoints.GOOGLE_URL, params=params)
             print(response)
             if response.status_code==200:
@@ -92,5 +90,7 @@ class Google_translator:
 ## verb use proper
 ## asyc
 ## git push 
-
+## request add models
+## cache check and imp.
+## club all three class 
     

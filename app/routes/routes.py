@@ -4,10 +4,9 @@ from sanic.response import json
 from sanic import response
 from app.utils.helper import validate
 from app.utils.lang_code import lang_code
-from app.managers.find_language import Finder
-from app.managers.lacto_api import Lacto_translator
-from app.managers.rapid_api import Rapid_translator
 from app.managers.google_api import Google_translator
+from app.managers.translator import translator
+from app.utils.helper import create_data
 
 app = Sanic("Translator")
 
@@ -28,44 +27,45 @@ async def finding(request):
 
 @app.post('/finder')
 async def find(request):
-    finder = Finder()
-    request_data = request.json
-    translated_txt = finder.api_call(request_data)
-    return json(translated_txt)
+    response = await translator(request.json,'language_finder')
+    return response.json()
 
 
 @app.post('/google_api')
 async def google(request):
-    translator = Google_translator()
-    request_data = request.json
-    ans = validate(request_data)
-    if ans['error']:
-        return json(ans)
-    translated_txt = translator.api_call(request_data)
-    return json(translated_txt)
+    request = request.json
+    val_response = await validate(request)
+    if val_response.error:
+        return val_response.json()
+    request_data = create_data(request,val_response)
+    response =  await translator(request_data,'google')
+    response.add_source_lang(val_response.data['source_language'])
+    return response.json()
 
 
 @app.post('/lacto_ai_api')
 async def lacto(request):
-    translator = Lacto_translator()
-    request_data = request.json
-    ans = validate(request_data)
-    if ans['error']:
-        return json(ans)
-    translated_txt = translator.api_call(request_data)
-    return json(translated_txt)
+    request = request.json
+    val_response = await validate(request)
+    if val_response.error:
+        return response.json()
+    request_data = create_data(request,val_response)
+    response =  await translator(request_data,'lacti')
+    response.add_source_lang(val_response.data['source_language'])
+    print(response.data)
+    return response.json()
 
 
 @app.post('/rapid_api')
 async def rapid(request):
-    translator = Rapid_translator()
-    request_data = request.json
-    ans = validate(request_data)
-    if ans['error']:
-        return json(ans)
-    translated_txt = translator.api_call(request_data)
-    print(translated_txt)
-    return json(translated_txt)
+    request = request.json
+    val_response = await validate(request)
+    if val_response.error:
+        return response.json()
+    request_data = create_data(request,val_response)
+    response =  await translator(request_data,'rapid')
+    response.add_source_lang(val_response.data['source_language'])
+    return response.json()
 
 
 @app.post('/file_google_api')
@@ -86,7 +86,6 @@ async def file_translate(request):
 async def suggest(request):
     request_data = request.json
     suggestions = []
-    print("Suggestion is called")
     target_string = request_data.get('text')
     n = len(target_string)
     if not n:
