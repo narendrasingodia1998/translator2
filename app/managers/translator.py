@@ -9,7 +9,7 @@ async def translator(request_data,url_type):
     '''
     val_response = await validate(request_data)
     if val_response.error:
-        return val_response.json()
+        return val_response
     request_data = create_data(request_data,val_response)
     request = Request(url_type)
     our_response = await request.async_api_call(request_data)

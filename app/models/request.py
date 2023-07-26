@@ -13,7 +13,7 @@ class Request():
         self.data = None
         self.headers = None
         self.url_type = url_type
-        self.response = Response()
+
 
     def build(self,request_data):
         '''
@@ -26,6 +26,7 @@ class Request():
                 "q": request_data.get('source_text'),
                 "target": get_code(request_data.get('target_language')),
                 "key": config.google_api_key}
+            
         
         elif self.url_type == 'language_finder':
             self.url = UrlEndPoints.GOOGLE_URL + '/detect'

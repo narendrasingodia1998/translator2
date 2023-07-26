@@ -13,7 +13,6 @@ async def validate(request_data):
     if response.error:
         return response
     detected_language = response.data['source_language']
-    print(f'Detected Language {detected_language}')
     #checking if source language is given
     if len(source_language.strip()) > 0:
         # Checking for valid language
